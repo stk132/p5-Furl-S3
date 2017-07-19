@@ -339,11 +339,13 @@ sub list_objects {
 
 sub create_object {
     my $self = shift;
-    my( $bucket, $key, $content, $headers ) = @_;
+    my( $bucket, $key, $content, $headers, $furl_options ) = @_;
+    $furl_options ||= {};
     validate_pos( @_, 1, 1, 
                   { type => HANDLE | SCALAR }, 
                   { type => HASHREF, optional => 1 } );
-    my $res = $self->request( 'PUT', $bucket, $key, undef, $headers, +{ content => $content });
+    $furl_options->{content} = $content;
+    my $res = $self->request( 'PUT', $bucket, $key, undef, $headers, $furl_options);
     unless ( _http_is_success($res->{code}) ) {
         return $self->error( $res );
     }
